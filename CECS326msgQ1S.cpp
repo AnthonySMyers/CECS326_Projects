@@ -34,7 +34,7 @@ int main() {
 
 	msgsnd(257,(struct buffer *)&message,size,5);	
 
-	cout<< getpid()<<" Sending random number: "<<message.text<<endl;
+	cout<< getpid()<<" Sending test: "<<message.text<<endl;
 	
 	return 0;
 }
