@@ -34,20 +34,12 @@ int main(){
 	bool con = true;
 	
 	while(con){
-		fWait(1);
 		char message[] = "S997";
-
 		sendTo(123, message) ;
-
 		sendTo(333, message) ;
 		cout << getpid() << ": sending messege to receivers" << endl;
 		cout << "message: " << message << endl;
-		
-		
-
 		receiveFrom(997, (struct msgbuf *)&msg);
-				
-
 		cout << getpid() << ": gets reply" << endl;
 		cout << "reply: " << msg.message << endl;
 		number= mToNumber(msg.message);

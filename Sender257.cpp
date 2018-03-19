@@ -33,7 +33,7 @@ int main(){
 
 			char message[] ="S257";
 			sendTo(333, message);
-			fWait(1);
+			//fWait(1);
 			
 		
 			receiveFrom(257,(struct msgbuf *)&msg);

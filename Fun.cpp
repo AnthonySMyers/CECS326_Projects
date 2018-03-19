@@ -55,7 +55,7 @@ int receiveFrom(long mtype, struct msgbuf * msg)
 		perror("msgrcv");
 		exit(1);
 	}
-	return 1;
+	return rc;
 }
 int mToNumber(char* message)
 {
