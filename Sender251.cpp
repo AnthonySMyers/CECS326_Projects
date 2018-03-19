@@ -1,35 +1,45 @@
 #include "get_info.h"
-#include <sys/types.h>
-#include <sys/ipc.h>
 #include <sys/msg.h>
 #include <cstring>
+#include <stdio.h>
 #include <iostream>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <cstdlib>
+
 using namespace std;
 int main(){
 	int qid = msgget(ftok(".",'u'), 0);
+	if(qid <0)
+	{
+		perror("msgget");
+		exit(1);
+	}
 	struct buf {
 		long mtype; // required
-		char killing[50]; // mesg content
+		char message[50]; // mesg content
 	};
+	bool play = true;
 	buf msg;
+	buf lastMessage;
+	lastMessage.mtype = 123;
+	strcpy(lastMessage.message, "exit");
+	msg.mtype = 123;
+	strcpy(msg.message, "S251");
 	int size = sizeof(msg)-sizeof(long);
-	msg.mtype = 117;
-	strcpy(msg.killing, "changing"); //creating a new string adding to char killing
-	msgsnd(qid, (struct msgbuf *)&msg, size, 0); //send message
-	cout << getpid() << ": sending to patch64" << endl;
-	msgrcv(qid, (struct msgbuf *)&msg, size, 117, 0); // read message
-	cout << getpid() << ": gets message" << endl;
-	cout << "message: " << msg.killing << endl;
-	msg.mtype =117;
-	strcat(msg.killing, " mtype is 117 now"); //add more stuff to the original string
-	msgsnd(qid, (struct msgbuf *)&msg, size, 0);
-	cout << getpid() << ": now exits" << endl;
-
-	msgrcv(qid, (struct msgbuf *)&msg, size, 117, 0); // read message 
-	cout << getpid() << ": gets message" << endl;
-	cout << "message: " << msg.killing << endl;
-	exit(0);
+	bool keepGoing = true;
+	get_info(qid, (struct msgbuf *)&lastMessage, size, lastMessage.mtype);
+	struct timeval t;
+	while(true)
+	{
+		
+		cout << getpid() << ": get message" << endl;
+		cout << "message: " << msg.message << endl;
+		msgsnd(qid, (struct msgbuf *)&msg, size, 0);
+		cout<< "Delaying " <<3 << " second(s) before sending next message" 			<<endl;
+		t.tv_sec = 3;
+		t.tv_usec =0;
+		select(8, NULL, NULL, NULL, &t);
+	}
+	
+	
 }
