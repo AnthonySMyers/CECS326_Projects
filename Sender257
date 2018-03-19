@@ -1,0 +1,49 @@
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <cstring>
+#include <iostream>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <cstdlib>
+#include <string>
+using namespace std;
+
+//Sender 257
+
+int main() {
+	
+	
+	
+	int qid = msgget(ftok(".",'u'), 0);
+	bool sending = true;
+
+	int random = rand();
+	//string s = to_string(random);
+	//cout<< random<<endl;	
+
+	struct buffer {
+		long mtype; 
+		char text[300]; 
+	};
+	buffer message;
+	string receive;
+	int size = sizeof(message)-sizeof(long);
+	
+	while(sending){
+
+		message.mtype = 257;
+		strcpy(message.text,"test");
+		msgsnd(257,(struct buffer *)&message,size,5);
+		msgrcv(qid, (struct buffer *)&message, size, 0, 0);
+		cout<< getpid()<<" Sending test: "<<message.text<<endl;
+		strcpy(receive, message.text);
+		
+		if(receive == "S"){
+		sending = false;		
+		}
+	}
+
+	exit(0);
+}
+	
